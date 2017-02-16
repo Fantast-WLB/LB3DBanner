@@ -20,6 +20,8 @@
 
 ///从xid、storyboard创建需要手动给图片
 @property(nonatomic,strong)NSArray *imageURLArr;
+///在线或离线图片
+@property(nonatomic,assign)BOOL isOffline;
 ///代码创建
 -(instancetype)initWithFrame:(CGRect)frame andImageURLArray:(NSArray *)imageURLArr;
 

@@ -20,6 +20,7 @@
 		53F0A9C71E543FEE00B33232 /* LB3DBannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F0A9C61E543FEE00B33232 /* LB3DBannerTests.m */; };
 		53F0A9D21E543FEE00B33232 /* LB3DBannerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F0A9D11E543FEE00B33232 /* LB3DBannerUITests.m */; };
 		7E329B56B2B6AA784F2A1FA6 /* libPods-LB3DBannerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13E4522D852895D52F612801 /* libPods-LB3DBannerTests.a */; };
+		C00199101E55B8CA00EEB6AE /* ezgif.com-video-to-gif.gif in Resources */ = {isa = PBXBuildFile; fileRef = C001990F1E55B8CA00EEB6AE /* ezgif.com-video-to-gif.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		814BD20EA188DDE608BFEA6F /* Pods-LB3DBannerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LB3DBannerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LB3DBannerTests/Pods-LB3DBannerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B2D4CCB6CA60D55206F72760 /* libPods-LB3DBanner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LB3DBanner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B693C0A617213C6D72925B11 /* Pods-LB3DBannerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LB3DBannerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LB3DBannerTests/Pods-LB3DBannerTests.release.xcconfig"; sourceTree = "<group>"; };
+		C001990F1E55B8CA00EEB6AE /* ezgif.com-video-to-gif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "ezgif.com-video-to-gif.gif"; sourceTree = "<group>"; };
 		D81D2CC966CE4D66231FD0A1 /* Pods-LB3DBanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LB3DBanner.release.xcconfig"; path = "Pods/Target Support Files/Pods-LB3DBanner/Pods-LB3DBanner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -175,6 +177,7 @@
 		53F0A9AC1E543FEE00B33232 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				C001990F1E55B8CA00EEB6AE /* ezgif.com-video-to-gif.gif */,
 				53F0A9AD1E543FEE00B33232 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -319,6 +322,7 @@
 				53F0A9BC1E543FEE00B33232 /* LaunchScreen.storyboard in Resources */,
 				53F0A9B91E543FEE00B33232 /* Assets.xcassets in Resources */,
 				53F0A9B71E543FEE00B33232 /* Main.storyboard in Resources */,
+				C00199101E55B8CA00EEB6AE /* ezgif.com-video-to-gif.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

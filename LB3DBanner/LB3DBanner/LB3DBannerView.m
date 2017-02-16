@@ -441,4 +441,14 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     }
 }
 
+-(void)setIsOffline:(BOOL)isOffline
+{
+    _isOffline = isOffline;
+    
+    self.midImageView.isOffline = isOffline;
+    self.leftImageView.isOffline = isOffline;
+    self.rightImageView.isOffline = isOffline;
+    self.leftBGImageView.isOffline = isOffline;
+    self.rightBGImageView.isOffline = isOffline;
+}
 @end
