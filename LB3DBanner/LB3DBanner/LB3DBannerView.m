@@ -179,6 +179,11 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     NSLog(@"点击中间跳转到%zd",self.currentIndex);
     LB3DBannerImageView *view = (LB3DBannerImageView *)tap.view;
     NSLog(@"%@",view.imageURL);
+    
+    if ([self.delegate respondsToSelector:@selector(didTapTheMidImageView:)])
+    {
+        [self.delegate didTapTheMidImageView:self];
+    }
 }
 
 -(void)tapLeftImageView:(UITapGestureRecognizer *)tap

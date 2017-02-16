@@ -8,8 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol LB3DBannerViewDelegate <NSObject>
+
+-(void)didTapTheMidImageView:(id)object;
+
+@end
+
 @interface LB3DBannerView : UIView
 
+@property(nonatomic,weak)id<LB3DBannerViewDelegate> delegate;
 
 -(instancetype)initWithFrame:(CGRect)frame andImageURLArray:(NSArray *)imageURLArr;
 
