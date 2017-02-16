@@ -1,8 +1,9 @@
 # LB3DBanner
-A 3D BannerView.
+A 3D BannerView support tap and swipe gesture.
 
 # Usage
 Here is how you can use it:
+
     ///yourImageArray can be array of URLs or imagenames
     LB3DBannerView *view = [[LB3DBannerView alloc]initWithFrame:CGRectMake(40, 40, 280,400) andImageURLArray:yourImageArray];
     [self.view addSubview:view];
@@ -19,6 +20,7 @@ Here is how you can use it:
 
         
 # AutoCarousel
+
         ///default is NO
         @property(nonatomic,assign)BOOL isAutoCarousel;
         -(void)starCarousel;
