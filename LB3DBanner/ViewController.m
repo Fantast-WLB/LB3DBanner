@@ -21,6 +21,7 @@
     
     [self.view addSubview:view];
     view.delegate = self;
+    view.isAutoCarousel = YES;
 }
 
 -(void)didTapTheMidImageView:(id)object

@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface LB3DBannerImageView : UIImageView
-
+///如果要加载本地图片则直接传图片名
 @property(nonatomic,copy)NSString *imageURL;
-
-@property(nonatomic,copy)NSString *imageName;
+///如果要加载本地图片更改此属性
+@property(nonatomic,assign)BOOL isOffline;
 
 @end

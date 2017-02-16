@@ -16,6 +16,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 };
 
 #define ANIMATIONDURATION 0.25
+#define TIMEINTERVAL 2
 
 @interface LB3DBannerView ()
 {
@@ -44,8 +45,6 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 
 @property(nonatomic,strong)LB3DBannerImageView *rightBGImageView;
 
-@property(nonatomic,strong)NSArray *imageURLArr;
-
 @property(nonatomic,assign)NSInteger currentIndex;
 
 @property(nonatomic,strong)UITapGestureRecognizer *leftTap;
@@ -58,6 +57,9 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 
 @property(nonatomic,strong)UISwipeGestureRecognizer *rightSwipe;
 
+@property(nonatomic,assign)BOOL carouselStarted;
+
+@property(nonatomic,strong)NSTimer *timer;
 @end
 
 @implementation LB3DBannerView
@@ -70,7 +72,20 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
         rightZPosition = -1;
         leftZPosition = -2;
         bgZPosition = -3;
+        [self setUpImageViews];
         self.imageURLArr = imageURLArr;
+    }
+    return self;
+}
+
+-(instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder])
+    {
+        midZPosition = 1;
+        rightZPosition = -1;
+        leftZPosition = -2;
+        bgZPosition = -3;
         [self setUpImageViews];
     }
     return self;
@@ -111,28 +126,28 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     self.midImageView = [[LB3DBannerImageView alloc]init];
     self.midImageView.frame = midRect;
     self.midImageView.userInteractionEnabled = YES;
-    self.midImageView.imageURL = self.imageURLArr[0];
+//    self.midImageView.imageURL = self.imageURLArr[0];
     self.currentIndex = 0;
     
     self.leftImageView = [[LB3DBannerImageView alloc]init];
     self.leftImageView.frame = leftRect;
     self.leftImageView.userInteractionEnabled = YES;
-    self.leftImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
+//    self.leftImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
     
     self.rightImageView = [[LB3DBannerImageView alloc]init];
     self.rightImageView.frame = rightRect;
     self.rightImageView.userInteractionEnabled = YES;
-    self.rightImageView.imageURL = self.imageURLArr[1];
+//    self.rightImageView.imageURL = self.imageURLArr[1];
     
     self.leftBGImageView = [[LB3DBannerImageView alloc]init];
     self.leftBGImageView.frame = bgRect;
     self.leftBGImageView.userInteractionEnabled = YES;
-    self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 2];
+//    self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 2];
     
     self.rightBGImageView = [[LB3DBannerImageView alloc]init];
     self.rightBGImageView.frame = bgRect;
     self.rightBGImageView.userInteractionEnabled = YES;
-    self.rightBGImageView.imageURL = self.imageURLArr[2];
+//    self.rightBGImageView.imageURL = self.imageURLArr[2];
 
     self.midImageView.alpha = 1;
     self.leftImageView.alpha = 0.7;
@@ -360,6 +375,70 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
         return self.midImageView;
     }
     return [super hitTest:point withEvent:event];
+}
+
+#pragma mark - 轮播
+-(void)starCarousel
+{
+    [self stopCarousel];
+    self.carouselStarted = YES;
+    if (self.imageURLArr)
+    {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:TIMEINTERVAL target:self selector:@selector(automaticScroll) userInfo:nil repeats:YES];
+        [[NSRunLoop mainRunLoop]addTimer:_timer forMode:NSRunLoopCommonModes];
+    }
+}
+
+-(void)stopCarousel
+{
+    self.carouselStarted = NO;
+    [self.timer invalidate];
+    self.timer = nil;
+}
+
+-(void)automaticScroll
+{
+    [self scrollToDirection:SwipeLeft];
+}
+
+#pragma mark - setter
+-(void)setImageURLArr:(NSArray *)imageURLArr
+{
+    if (imageURLArr == nil)
+    {
+        return;
+    }
+    _imageURLArr = imageURLArr.copy;
+    
+    self.midImageView.imageURL = self.imageURLArr[0];
+    self.leftImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
+    self.rightImageView.imageURL = self.imageURLArr[1];
+    self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 2];
+    self.rightBGImageView.imageURL = self.imageURLArr[2];
+    
+    if (self.isAutoCarousel)
+    {
+        [self starCarousel];
+    }
+}
+
+-(void)setIsAutoCarousel:(BOOL)isAutoCarousel
+{
+    _isAutoCarousel = isAutoCarousel;
+    
+    if (self.imageURLArr == nil)
+    {
+        return;
+    }
+    
+    if (isAutoCarousel)
+    {
+        [self starCarousel];
+    }
+    else
+    {
+        [self stopCarousel];
+    }
 }
 
 @end

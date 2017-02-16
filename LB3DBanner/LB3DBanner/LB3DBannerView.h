@@ -18,6 +18,14 @@
 
 @property(nonatomic,weak)id<LB3DBannerViewDelegate> delegate;
 
+///从xid、storyboard创建需要手动给图片
+@property(nonatomic,strong)NSArray *imageURLArr;
+///代码创建
 -(instancetype)initWithFrame:(CGRect)frame andImageURLArray:(NSArray *)imageURLArr;
+
+/********* 轮播 *********/
+@property(nonatomic,assign)BOOL isAutoCarousel;
+-(void)starCarousel;
+-(void)stopCarousel;
 
 @end

@@ -51,14 +51,13 @@
 {
     _imageURL = imageURL;
     
-    [self sd_setImageWithURL:[NSURL URLWithString:imageURL]];
-}
-
--(void)setImageName:(NSString *)imageName
-{
-    _imageName = imageName;
+    if (self.isOffline)
+    {
+        self.image = [UIImage imageNamed:imageURL];
+        return;
+    }
     
-    self.image = [UIImage imageNamed:imageName];
+    [self sd_setImageWithURL:[NSURL URLWithString:imageURL]];
 }
 
 -(void)setImage:(UIImage *)image
