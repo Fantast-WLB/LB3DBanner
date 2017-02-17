@@ -34,8 +34,8 @@
         self.layer.shadowOffset = CGSizeMake(0, 0);
         self.layer.shadowOpacity = 0.4;
         self.layer.shadowRadius = 15;
-        self.layer.borderColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1.00].CGColor;
-        self.layer.borderWidth = 0.1f;
+//        self.layer.borderColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1.00].CGColor;
+//        self.layer.borderWidth = 0.1f;
         self.backgroundColor = [UIColor clearColor];
     }
     return self;
