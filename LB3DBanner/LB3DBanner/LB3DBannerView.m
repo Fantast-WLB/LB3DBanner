@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     CGFloat offsetX;
     CGFloat offsetY;
 
+    BOOL UserOperating;
 }
 
 @property(nonatomic,strong)LB3DBannerImageView *midImageView;
@@ -204,24 +205,28 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 -(void)tapLeftImageView:(UITapGestureRecognizer *)tap
 {
     NSLog(@"左边点击");
+    UserOperating = YES;
     [self scrollToDirection:SwipeRight];
 }
 
 -(void)tapRightImageView:(UITapGestureRecognizer *)tap
 {
     NSLog(@"右边点击");
+    UserOperating = YES;
     [self scrollToDirection:SwipeLeft];
 }
 
 -(void)swipeLeft:(UISwipeGestureRecognizer *)swipe
 {
     NSLog(@"左滑");
+    UserOperating = YES;
     [self scrollToDirection:SwipeLeft];
 }
 
 -(void)swipeRight:(UISwipeGestureRecognizer *)swipe
 {
     NSLog(@"右滑");
+    UserOperating = YES;
     [self scrollToDirection:SwipeRight];
 }
 
@@ -287,7 +292,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
                 [weakSelf.midImageView addGestureRecognizer:weakSelf.leftSwipe];
                 
             } completion:^(BOOL finished) {
-                
+                UserOperating = NO;
             }];
         }
             break;
@@ -351,7 +356,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
                 [weakSelf.midImageView addGestureRecognizer:weakSelf.leftSwipe];
                 
             } completion:^(BOOL finished) {
-                
+                UserOperating = NO;
             }];
             break;
         }
@@ -398,6 +403,10 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 
 -(void)automaticScroll
 {
+    if (UserOperating)
+    {
+        return;
+    }
     [self scrollToDirection:SwipeLeft];
 }
 
