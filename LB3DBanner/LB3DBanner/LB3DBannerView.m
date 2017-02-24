@@ -419,11 +419,17 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     }
     _imageURLArr = imageURLArr.copy;
     
-    self.midImageView.imageURL = self.imageURLArr[0];
-    self.leftImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
-    self.rightImageView.imageURL = self.imageURLArr[1];
-    self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 2];
-    self.rightBGImageView.imageURL = self.imageURLArr[2];
+    if (self.imageURLArr.count > 0) {
+        self.midImageView.imageURL = self.imageURLArr[0];
+    }
+    if (self.imageURLArr.count > 1) {
+        self.leftImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
+        self.rightImageView.imageURL = self.imageURLArr[1];
+    }
+    if (self.imageURLArr.count > 2) {
+        self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 2];
+        self.rightBGImageView.imageURL = self.imageURLArr[2];
+    }
     
     if (self.isAutoCarousel)
     {
