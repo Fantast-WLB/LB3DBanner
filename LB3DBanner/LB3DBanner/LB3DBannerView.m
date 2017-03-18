@@ -180,6 +180,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     [self.midImageView addGestureRecognizer:self.midTap];
     self.midPan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panMidImageView:)];
     [self.midImageView addGestureRecognizer:self.midPan];
+    
     self.leftTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapLeftImageView:)];
     [self.leftImageView addGestureRecognizer:self.leftTap];
     self.rightTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapRightImageView:)];
@@ -360,6 +361,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             {
                 self.currentIndex = self.imageURLArr.count - 1;
             }
+            
             if (self.currentIndex - 2 == -1)
             {
                 self.rightBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
@@ -372,6 +374,20 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             {
                 self.rightBGImageView.imageURL = self.imageURLArr[self.currentIndex - 2];
             }
+            
+            if (self.currentIndex - 1 == -1)
+            {
+                self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 1];
+            }
+            else if (self.currentIndex - 1 == -2)
+            {
+                self.leftBGImageView.imageURL = self.imageURLArr[self.imageURLArr.count - 2];
+            }
+            else
+            {
+                self.leftBGImageView.imageURL = self.imageURLArr[self.currentIndex - 1];
+            }
+            
             __weak typeof(self)weakSelf = self;
             [UIView animateWithDuration:ANIMATIONDURATION animations:^{
                 [weakSelf moveTowardRight:weakSelf];
@@ -394,11 +410,12 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             {
                 self.currentIndex = 0;
             }
-            if (self.currentIndex + 2 == self.imageURLArr.count + 1)
+            
+            if (self.currentIndex + 1 == self.imageURLArr.count)
             {
                 self.rightBGImageView.imageURL = self.imageURLArr[0];
             }
-            else if (self.currentIndex + 2 == self.imageURLArr.count + 2)
+            else if (self.currentIndex + 1 == self.imageURLArr.count + 1)
             {
                 self.rightBGImageView.imageURL = self.imageURLArr[1];
             }
@@ -406,6 +423,20 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             {
                 self.rightBGImageView.imageURL = self.imageURLArr[self.currentIndex + 1];
             }
+            
+            if (self.currentIndex + 2 == self.imageURLArr.count + 1)
+            {
+                self.leftBGImageView.imageURL = self.imageURLArr[1];
+            }
+            else if (self.currentIndex + 2 == self.imageURLArr.count)
+            {
+                self.leftBGImageView.imageURL = self.imageURLArr[0];
+            }
+            else
+            {
+                self.leftBGImageView.imageURL = self.imageURLArr[self.currentIndex + 2];
+            }
+            
 //            NSLog(@"%zd",self.currentIndex);
 //            NSLog(@"%@",self.rightBGImageView.imageURL);
             __weak typeof(self)weakSelf = self;
@@ -496,8 +527,8 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     view.leftImageView.alpha = 0.7;
     view.midImageView.alpha = 1;
     view.rightImageView.alpha = 0.7;
-    view.leftBGImageView.alpha = 0;
-    view.rightBGImageView.alpha = 0;
+//    view.leftBGImageView.alpha = 0;
+//    view.rightBGImageView.alpha = 0;
     
     [view.midImageView addGestureRecognizer:view.rightSwipe];
     [view.midImageView addGestureRecognizer:view.midPan];
