@@ -301,7 +301,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
                 weakSelf.rightImageView.layer.zPosition = rightZPosition;
                 weakSelf.rightBGImageView.layer.zPosition = bgZPosition;
             }completion:^(BOOL finished) {
-                [weakSelf starCarousel];
+                [weakSelf startCarousel];
             }];
         }
     }
@@ -381,7 +381,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
                 ///拖动手势结束后重置
                 if (weakSelf.timer == nil)
                 {
-                    [weakSelf starCarousel];
+                    [weakSelf startCarousel];
                 }
             }];
         }
@@ -417,7 +417,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
                 ///拖动手势结束后重置
                 if (weakSelf.timer == nil)
                 {
-                    [weakSelf starCarousel];
+                    [weakSelf startCarousel];
                 }
             }];
             break;
@@ -526,7 +526,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 }
 
 #pragma mark - 轮播
--(void)starCarousel
+-(void)startCarousel
 {
     [self stopCarousel];
     self.carouselStarted = YES;
@@ -576,7 +576,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     
     if (self.isAutoCarousel)
     {
-        [self starCarousel];
+        [self startCarousel];
     }
 }
 
@@ -591,7 +591,7 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     
     if (isAutoCarousel)
     {
-        [self starCarousel];
+        [self startCarousel];
     }
     else
     {
