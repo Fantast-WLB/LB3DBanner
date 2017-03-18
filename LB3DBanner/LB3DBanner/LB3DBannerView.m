@@ -58,6 +58,8 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 
 @property(nonatomic,strong)UISwipeGestureRecognizer *rightSwipe;
 
+@property(nonatomic,strong)UIPanGestureRecognizer *midPan;
+
 @property(nonatomic,assign)BOOL carouselStarted;
 
 @property(nonatomic,strong)NSTimer *timer;
@@ -176,6 +178,8 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
     
     self.midTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapMidImageView:)];
     [self.midImageView addGestureRecognizer:self.midTap];
+    self.midPan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panMidImageView:)];
+    [self.midImageView addGestureRecognizer:self.midPan];
     self.leftTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapLeftImageView:)];
     [self.leftImageView addGestureRecognizer:self.leftTap];
     self.rightTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapRightImageView:)];
@@ -190,11 +194,125 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
 }
 
 #pragma mark - 手势
+-(void)panMidImageView:(UIPanGestureRecognizer *)pan
+{
+    [self stopCarousel];
+    
+    CGPoint location = [pan translationInView:self];
+    
+//    NSLog(@"x:%f -- y:%f",location.x,location.y);
+    
+    CGFloat xDistanceRatio = location.x < 0 ? fabs(location.x) / (midRect.origin.x - leftRect.origin.x) : fabs(location.x) / (rightRect.origin.x - midRect.origin.x);
+    if (xDistanceRatio < 1)
+    {
+        CGRect temp = midRect;
+        temp.origin.x += location.x;
+        temp.origin.y += offsetY / 2 * xDistanceRatio;
+        temp.size.width -= offsetX * xDistanceRatio;
+        temp.size.height -= offsetY * xDistanceRatio;
+        self.midImageView.frame = temp;
+        
+        if (location.x < 0)
+        {
+            self.midImageView.layer.zPosition = midZPosition - 2 * xDistanceRatio;
+            self.leftImageView.layer.zPosition = leftZPosition - 2 * xDistanceRatio;
+            self.rightImageView.layer.zPosition = rightZPosition + 2 * xDistanceRatio;
+            self.rightBGImageView.layer.zPosition = bgZPosition + 2 * xDistanceRatio;
+            
+            self.leftImageView.alpha = 1 - xDistanceRatio;
+            self.midImageView.alpha = 1 - 0.3 * xDistanceRatio;
+            self.rightImageView.alpha = 0.7 + 0.3 * xDistanceRatio;
+            self.rightBGImageView.alpha = 0.7 * xDistanceRatio;
+            
+            CGRect tempLeft = leftRect;
+            tempLeft.origin.x += (bgRect.origin.x - leftRect.origin.x) * xDistanceRatio;
+            self.leftImageView.frame = tempLeft;
+            
+            CGRect tempRight = rightRect;
+            tempRight.origin.x -= (rightRect.origin.x - midRect.origin.x) * xDistanceRatio;
+            tempRight.origin.y -= offsetY / 2 * xDistanceRatio;
+            tempRight.size.width += offsetX * xDistanceRatio;
+            tempRight.size.height += offsetY * xDistanceRatio;
+            self.rightImageView.frame = tempRight;
+            
+            CGRect tempBG = bgRect;
+            tempBG.origin.x += (rightRect.origin.x - bgRect.origin.x) * xDistanceRatio;
+            self.rightBGImageView.frame = tempBG;
+        }
+
+        if (location.x > 0)
+        {
+            self.midImageView.layer.zPosition = midZPosition - 2 * xDistanceRatio;
+            self.rightImageView.layer.zPosition = rightZPosition - 2 * xDistanceRatio;
+            self.leftImageView.layer.zPosition = leftZPosition + 2 * xDistanceRatio;
+            self.leftBGImageView.layer.zPosition = bgZPosition + 2 * xDistanceRatio;
+            
+            self.rightImageView.alpha = 1 - xDistanceRatio;
+            self.midImageView.alpha = 1 - 0.3 * xDistanceRatio;
+            self.leftImageView.alpha = 0.7 + 0.3 * xDistanceRatio;
+            self.leftBGImageView.alpha = 0.7 * xDistanceRatio;
+            
+            CGRect temRight = rightRect;
+            temRight.origin.x += (bgRect.origin.x - rightRect.origin.x) * xDistanceRatio;
+            self.rightImageView.frame = temRight;
+            
+            CGRect tempLeft = leftRect;
+            tempLeft.origin.x += (midRect.origin.x - leftRect.origin.x) * xDistanceRatio;
+            tempLeft.origin.y -= offsetY / 2 * xDistanceRatio;
+            tempLeft.size.width += offsetX * xDistanceRatio;
+            tempLeft.size.height += offsetY * xDistanceRatio;
+            self.leftImageView.frame = tempLeft;
+            
+            CGRect tempBG = bgRect;
+            tempBG.origin.x += (leftRect.origin.x - bgRect.origin.x) * xDistanceRatio;
+            self.leftBGImageView.frame = tempBG;
+        }
+    }
+    
+    if (pan.state == UIGestureRecognizerStateCancelled || pan.state == UIGestureRecognizerStateEnded)
+    {
+        if (location.x < (leftRect.origin.x - midRect.origin.x) / 2)
+        {
+            [self swipeLeft:nil];
+        }
+        else if (location.x > (rightRect.origin.x - midRect.origin.x) / 2)
+        {
+            [self swipeRight:nil];
+        }
+        else
+        {
+            __weak typeof(self)weakSelf = self;
+            [UIView animateWithDuration:ANIMATIONDURATION animations:^{
+                weakSelf.midImageView.frame = midRect;
+                weakSelf.leftImageView.frame = leftRect;
+                weakSelf.leftBGImageView.frame = bgRect;
+                weakSelf.rightImageView.frame = rightRect;
+                weakSelf.rightBGImageView.frame = bgRect;
+                
+                weakSelf.midImageView.alpha = 1;
+                weakSelf.leftImageView.alpha = 0.7;
+                weakSelf.rightImageView.alpha = 0.7;
+                weakSelf.leftBGImageView.alpha = 0;
+                weakSelf.rightBGImageView.alpha = 0;
+                
+                weakSelf.midImageView.layer.zPosition = midZPosition;
+                weakSelf.leftImageView.layer.zPosition = leftZPosition;
+                weakSelf.leftBGImageView.layer.zPosition = bgZPosition;
+                weakSelf.rightImageView.layer.zPosition = rightZPosition;
+                weakSelf.rightBGImageView.layer.zPosition = bgZPosition;
+            }completion:^(BOOL finished) {
+                [weakSelf starCarousel];
+            }];
+        }
+    }
+}
+
+
 -(void)tapMidImageView:(UITapGestureRecognizer *)tap
 {
     NSLog(@"点击中间跳转到%zd",self.currentIndex);
     LB3DBannerImageView *view = (LB3DBannerImageView *)tap.view;
-    NSLog(@"%@",view.imageURL);
+//    NSLog(@"%@",view.imageURL);
     
     if ([self.delegate respondsToSelector:@selector(didTapTheMidImageView:)])
     {
@@ -256,43 +374,15 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             }
             __weak typeof(self)weakSelf = self;
             [UIView animateWithDuration:ANIMATIONDURATION animations:^{
-                weakSelf.midImageView.frame = rightRect;
-                weakSelf.rightImageView.frame = bgRect;
-                weakSelf.leftBGImageView.frame = leftRect;
-                weakSelf.leftImageView.frame = midRect;
-
-                weakSelf.rightImageView.layer.zPosition = bgZPosition;
-                weakSelf.rightBGImageView.layer.zPosition = rightZPosition;
-                weakSelf.leftImageView.layer.zPosition = midZPosition;
-                weakSelf.midImageView.layer.zPosition = leftZPosition;
-                
-                [weakSelf.midImageView removeGestureRecognizer:weakSelf.midTap];
-                [weakSelf.midImageView removeGestureRecognizer:weakSelf.leftSwipe];
-                [weakSelf.midImageView removeGestureRecognizer:weakSelf.rightSwipe];
-                [weakSelf.rightImageView removeGestureRecognizer:weakSelf.rightTap];
-                [weakSelf.leftImageView removeGestureRecognizer:weakSelf.leftTap];
-                
-                LB3DBannerImageView *temp = weakSelf.leftImageView;
-                weakSelf.leftImageView = weakSelf.leftBGImageView;
-                weakSelf.leftBGImageView = weakSelf.rightBGImageView;
-                weakSelf.rightBGImageView = weakSelf.rightImageView;
-                weakSelf.rightImageView = weakSelf.midImageView;
-                weakSelf.midImageView = temp;
-                
-                weakSelf.leftImageView.alpha = 0.7;
-                weakSelf.midImageView.alpha = 1;
-                weakSelf.rightImageView.alpha = 0.7;
-                weakSelf.leftBGImageView.alpha = 0;
-                weakSelf.rightBGImageView.alpha = 0;
-                
-                [weakSelf.midImageView addGestureRecognizer:weakSelf.rightSwipe];
-                [weakSelf.rightImageView addGestureRecognizer:weakSelf.rightTap];
-                [weakSelf.leftImageView addGestureRecognizer:weakSelf.leftTap];
-                [weakSelf.midImageView addGestureRecognizer:weakSelf.midTap];
-                [weakSelf.midImageView addGestureRecognizer:weakSelf.leftSwipe];
-                
+                [weakSelf moveTowardRight:weakSelf];
             } completion:^(BOOL finished) {
                 UserOperating = NO;
+                
+                ///拖动手势结束后重置
+                if (weakSelf.timer == nil)
+                {
+                    [weakSelf starCarousel];
+                }
             }];
         }
             break;
@@ -316,47 +406,19 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             {
                 self.rightBGImageView.imageURL = self.imageURLArr[self.currentIndex + 1];
             }
-            NSLog(@"%zd",self.currentIndex);
-            NSLog(@"%@",self.rightBGImageView.imageURL);
+//            NSLog(@"%zd",self.currentIndex);
+//            NSLog(@"%@",self.rightBGImageView.imageURL);
             __weak typeof(self)weakSelf = self;
             [UIView animateWithDuration:ANIMATIONDURATION animations:^{
-                weakSelf.leftImageView.frame = bgRect;
-                weakSelf.midImageView.frame = leftRect;
-                weakSelf.rightImageView.frame = midRect;
-                weakSelf.rightBGImageView.frame = rightRect;
-                
-                weakSelf.rightImageView.layer.zPosition = midZPosition;
-                weakSelf.leftImageView.layer.zPosition = bgZPosition;
-                weakSelf.rightBGImageView.layer.zPosition = rightZPosition;
-                weakSelf.midImageView.layer.zPosition = leftZPosition;
-                
-                [weakSelf.midImageView removeGestureRecognizer:weakSelf.midTap];
-                [weakSelf.midImageView removeGestureRecognizer:weakSelf.leftSwipe];
-                [weakSelf.midImageView removeGestureRecognizer:weakSelf.rightSwipe];
-                [weakSelf.rightImageView removeGestureRecognizer:weakSelf.rightTap];
-                [weakSelf.leftImageView removeGestureRecognizer:weakSelf.leftTap];
-                
-                LB3DBannerImageView *temp = weakSelf.leftImageView;
-                weakSelf.leftImageView = weakSelf.midImageView;
-                weakSelf.midImageView = weakSelf.rightImageView;
-                weakSelf.rightImageView = weakSelf.rightBGImageView;
-                weakSelf.rightBGImageView = weakSelf.leftBGImageView;
-                weakSelf.leftBGImageView = temp;
-                
-                weakSelf.leftImageView.alpha = 0.7;
-                weakSelf.midImageView.alpha = 1;
-                weakSelf.rightImageView.alpha = 0.7;
-                weakSelf.leftBGImageView.alpha = 0;
-                weakSelf.rightBGImageView.alpha = 0;
-                
-                [weakSelf.midImageView addGestureRecognizer:weakSelf.rightSwipe];
-                [weakSelf.rightImageView addGestureRecognizer:weakSelf.rightTap];
-                [weakSelf.leftImageView addGestureRecognizer:weakSelf.leftTap];
-                [weakSelf.midImageView addGestureRecognizer:weakSelf.midTap];
-                [weakSelf.midImageView addGestureRecognizer:weakSelf.leftSwipe];
-                
+                [weakSelf moveTowardLeft:weakSelf];
             } completion:^(BOOL finished) {
                 UserOperating = NO;
+                
+                ///拖动手势结束后重置
+                if (weakSelf.timer == nil)
+                {
+                    [weakSelf starCarousel];
+                }
             }];
             break;
         }
@@ -364,6 +426,87 @@ typedef NS_ENUM(NSInteger, SwipeDirection)
             break;
     }
 }
+
+-(void)moveTowardLeft:(LB3DBannerView *)view
+{
+    view.leftImageView.frame = bgRect;
+    view.midImageView.frame = leftRect;
+    view.rightImageView.frame = midRect;
+    view.rightBGImageView.frame = rightRect;
+    
+    view.rightImageView.layer.zPosition = midZPosition;
+    view.leftImageView.layer.zPosition = bgZPosition;
+    view.rightBGImageView.layer.zPosition = rightZPosition;
+    view.midImageView.layer.zPosition = leftZPosition;
+    
+    [view.midImageView removeGestureRecognizer:view.midTap];
+    [view.midImageView removeGestureRecognizer:view.midPan];
+    [view.midImageView removeGestureRecognizer:view.leftSwipe];
+    [view.midImageView removeGestureRecognizer:view.rightSwipe];
+    [view.rightImageView removeGestureRecognizer:view.rightTap];
+    [view.leftImageView removeGestureRecognizer:view.leftTap];
+    
+    LB3DBannerImageView *temp = view.leftImageView;
+    view.leftImageView = view.midImageView;
+    view.midImageView = view.rightImageView;
+    view.rightImageView = view.rightBGImageView;
+    view.rightBGImageView = view.leftBGImageView;
+    view.leftBGImageView = temp;
+    
+    view.leftImageView.alpha = 0.7;
+    view.midImageView.alpha = 1;
+    view.rightImageView.alpha = 0.7;
+    view.leftBGImageView.alpha = 0;
+    view.rightBGImageView.alpha = 0;
+    
+    [view.midImageView addGestureRecognizer:view.rightSwipe];
+    [view.midImageView addGestureRecognizer:view.midPan];
+    [view.rightImageView addGestureRecognizer:view.rightTap];
+    [view.leftImageView addGestureRecognizer:view.leftTap];
+    [view.midImageView addGestureRecognizer:view.midTap];
+    [view.midImageView addGestureRecognizer:view.leftSwipe];
+}
+
+-(void)moveTowardRight:(LB3DBannerView *)view
+{
+    view.midImageView.frame = rightRect;
+    view.rightImageView.frame = bgRect;
+    view.leftBGImageView.frame = leftRect;
+    view.leftImageView.frame = midRect;
+    
+    view.rightImageView.layer.zPosition = bgZPosition;
+    view.rightBGImageView.layer.zPosition = rightZPosition;
+    view.leftImageView.layer.zPosition = midZPosition;
+    view.midImageView.layer.zPosition = leftZPosition;
+    
+    [view.midImageView removeGestureRecognizer:view.midTap];
+    [view.midImageView removeGestureRecognizer:view.midPan];
+    [view.midImageView removeGestureRecognizer:view.leftSwipe];
+    [view.midImageView removeGestureRecognizer:view.rightSwipe];
+    [view.rightImageView removeGestureRecognizer:view.rightTap];
+    [view.leftImageView removeGestureRecognizer:view.leftTap];
+    
+    LB3DBannerImageView *temp = view.leftImageView;
+    view.leftImageView = view.leftBGImageView;
+    view.leftBGImageView = view.rightBGImageView;
+    view.rightBGImageView = view.rightImageView;
+    view.rightImageView = view.midImageView;
+    view.midImageView = temp;
+    
+    view.leftImageView.alpha = 0.7;
+    view.midImageView.alpha = 1;
+    view.rightImageView.alpha = 0.7;
+    view.leftBGImageView.alpha = 0;
+    view.rightBGImageView.alpha = 0;
+    
+    [view.midImageView addGestureRecognizer:view.rightSwipe];
+    [view.midImageView addGestureRecognizer:view.midPan];
+    [view.rightImageView addGestureRecognizer:view.rightTap];
+    [view.leftImageView addGestureRecognizer:view.leftTap];
+    [view.midImageView addGestureRecognizer:view.midTap];
+    [view.midImageView addGestureRecognizer:view.leftSwipe];
+}
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

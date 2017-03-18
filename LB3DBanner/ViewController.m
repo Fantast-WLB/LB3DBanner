@@ -26,7 +26,7 @@
 
 -(void)didTapTheMidImageView:(id)object
 {
-    NSLog(@"点击中间--代理");
+//    NSLog(@"点击中间--代理");
 }
 
 - (void)didReceiveMemoryWarning {
